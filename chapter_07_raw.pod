@@ -24,8 +24,8 @@ Regular expressions are powerful, but they're a painfully low-level way of deali
 =head2     7.1. HTML as Tokens  HTML做为域（Tokens 翻译为域）
 
 
-Your experience with HTML code probably involves seeing raw text such as this: 
-你常常见到的会见到下面这样HTML代码：
+ Your experience with HTML code probably involves seeing raw text such as this: 
+ 你常常见到的会见到下面这样HTML代码：
 
   <p>Dear Diary,
 
@@ -38,84 +38,31 @@ The HTML::TokeParser module divides the HTML into units called tokens, which mea
 
 HTML::TokeParser模块把HTML分割成一个个叫做域的部分，解析而成的最小原子。上面的代码可以被解析成这样的部分：
 
-start-tag token  
-
-开始域
-
-p with no attributes  
-
-无属性的P标签
-
-text token  
-
-文本域
-
- Dear Diary,\n 
-
-start-tag token  
-
-开始域
-
-br with no attributes  
-
-无属性P标签
-
-text token  
-
-文本域
-
- I'm gonna be a superstar, because I'm learning to play\nthe 
-
-start-tag token 
-
-开始域
-
+start-tag token  开始域
+p with no attributes  无属性的P标签
+text token  文本域
+Dear Diary,\n 
+start-tag token  开始域
+br with no attributes  无属性P标签
+text token  文本域
+I'm gonna be a superstar, because I'm learning to play\nthe 
+start-tag token 开始域
 a, with attribute href whose value is http://MyBalalaika.com 
-
 A标签其href值为http://MyBalalaika.com
-
-text token  
-
-文本域
-
+text token  文本域
 balalaika 
-
-end-tag token  
-
-结束域
-
+end-tag token  结束域
 a 
-
-text token  
-
-文本域
-
- &amp; the , which means & the 
-
-start-tag token  
-
-开始域
-
+text token  文本域
+&amp; the , which means & the 
+start-tag token  开始域
 a, with attribute href equals http://MyBazouki.com 
-
 A标签，href链接为http://MyBazouki.com
-
-text token  
-
-文本域
-
+text token  文本域
 bazouki 
-
-end-tag token 
-
-结束域
-
+end-tag token 结束域
 a 
-
-text token  
-
-文本域
-
+text token  文本域
 !!!\n 
 
 This representation of things is more abstract, focusing on markup concepts and not individual characters. So whereas the two <a> tags have different types of quotes around their attribute values in the raw HTML, as tokens each has a start-tag of type a, with an href attribute of a particular value. A program that extracts information by working with a stream of tokens doesn't have to worry about the idiosyncrasies of entity encoding, whitespace, quotes, and trying to work out where a tag ends. 
@@ -161,37 +108,22 @@ The $token can have one of six kinds of values, distinguished first by the value
 
 $token变量可能为六中类型的值，下表7-1显示了所有可能的域类型。可以用$token->[0]获得这些信息。
 
-Table 7-1. Token types  
-
-表7-1 域类型
-
+Table 7-1. Token types  表7-1 域类型
 Token	Values
-
- Start-tag	["S", $tag, $attribute_hashref, $attribute_order_arrayref, $source]
-
- End-tag	["E", $tag, $source]
-
- Text	["T", $text, $should_not_decode]
-
- Comment	["C", $source]
-
- Declaration	["D", $source]
-
- Processing instruction	["PI", $content, $source]
+Start-tag	["S", $tag, $attribute_hashref, $attribute_order_arrayref, $source]
+End-tag	["E", $tag, $source]
+Text	["T", $text, $should_not_decode]
+Comment	["C", $source]
+Declaration	["D", $source]
+Processing instruction	["PI", $content, $source]
 
 域	值
-
- 开始域	["S", $tag, $attribute_hashref, $attribute_order_arrayref, $source]
-
- 结束域	["E", $tag, $source]
-
- 文本域	["T", $text, $should_not_decode]
-
- 注释域	["C", $source]
-
- 声明域	["D", $source]
-
- 处理指令域	["PI", $content, $source]
+开始域	["S", $tag, $attribute_hashref, $attribute_order_arrayref, $source]
+结束域	["E", $tag, $source]
+文本域	["T", $text, $should_not_decode]
+注释域	["C", $source]
+声明域	["D", $source]
+处理指令域	["PI", $content, $source]
 
 
 =head3    7.2.1. Start-Tag Tokens 开始域
@@ -203,16 +135,11 @@ If $token->[0] is "S", the token represents a start-tag:
  ["S",  $tag, $attribute_hash, $attribute_order_arrayref, $source]
 
 The components of this token are:
-
 这个token的组成为：
-
- $tag 
-
+$tag 
 The tag name, in lowercase. 
-
 标签名，小写
-
- $attribute_hashref 
+$attribute_hashref 
 
 A reference to a hash encoding the attributes of this tag. The (lowercase) attribute names are the keys of the hash. 
 
@@ -224,7 +151,7 @@ A reference to an array of (lowercase) attribute names, in case you need to acce
 
 指向属性名（小写）数组的引用，需要顺序访问。
 
- $source 
+$source 
 
 The original HTML for this token. 
 
@@ -268,14 +195,12 @@ The components of this tag are:
 
 这个标志由以下部分组成：
 
- $tag 
-
+$tag 
 The lowercase name of the tag being closed. 
 
 结束的签，小写字母。
 
- $source 
-
+$source 
 The original HTML for this token. 
 
 这个原始HTML字符串
@@ -304,22 +229,19 @@ The elements of this array are:
 
 文本域有三部分构成
 
- $text 
-
+$text 
 The text, which may have entities. 
 
 文本，可能包含原子
 
- $should_not_decode 
+$should_not_decode 
 
 A Boolean value true indicating that you should not decode the entities in $text. 
 
 一个布尔值，取True时表示不用转码$text中的原子。
 
 Tokenizing this HTML:
-
- &amp; the
-
+&amp; the
 gives this token:
 
  [ 'T',' &amp; the','']
@@ -341,7 +263,6 @@ Text inside <script>, <style>, <xmp>, <listing>, and <plaintext> tags is not sup
 =head3    7.2.4. Comment Tokens  注释域
 
 When $token->[0] is "C", you have a comment token: 
-
 $token->[0]为“C“表示一个注释域。
 
  ["C", $source]
@@ -350,15 +271,11 @@ The $source component of the token holds the original HTML of the comment. Most 
 
 注释域用一个标量$source保存原始HTML注释，大多数程序处理过程直接把这些注释忽略掉。
 
-Parsing this HTML 
-
-这个段HTML段
+Parsing this HTML 这个段HTML段
 
  <!-- Shatner's best known r&ocirc;le -->
 
-gives us this $token value: 
-
-被解析成下面的注释域：
+gives us this $token value: 被解析成下面的注释域：
 
  [ 'C', #0: we're a comment
   '<!-- Shatner's best known r&ocirc;le -->'  #1: source
@@ -377,7 +294,6 @@ The $source element of the array is the HTML of the declaration. Declarations ra
 定义域用标量$source 表示HTML的定义字段。在HTML中很少有定义字段，就算尽有的一些也是没有啥意义的。大多数程序在处理HTML时候是忽略这些声明的。
 
 This HTML:
-
 这段
 
  <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
@@ -398,16 +314,14 @@ When $token->[0] is "PI", the token represents a processing instruction:
 $token->[0]值“PI”表示过程指令域。过程指令域的结构如下：
 
  [ "PI", $instruction, $source ]
-
 The components are: 
-
- $instruction 
+$instruction 
 
 The processing instruction stripped of initial <? and trailing >. 
 
 过程指令被去掉开头的“<?”和结尾的“>”保存在$instruction标量中。
 
- $source 
+$source 
 
 The original HTML for the processing instruction. 
 
@@ -436,7 +350,6 @@ Now that you know the composition of the various types of tokens, let's see how 
   || die "Couldn't read HTML file $filename: $!";
 
 # For a string:
-
 # 对字符串形式的HTML用引用的形式： 
   
   HTML::TokeParser->new( \$string_of_html );
